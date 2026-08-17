@@ -1,0 +1,19 @@
+
+
+spring:
+
+  # Verbindung zu unserer PostgreSQL Datenbank
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banksystem
+    username: postgres
+    password: ${DB_PASSWORD}
+
+  jpa:
+
+    hibernate:
+
+      # Erstellt und aktualisiert Tabellen anhand unserer Entity Klassen.
+      ddl-auto: update
+
+    # Zeigt SQL Befehle im Terminal an.
+    show-sql: true

@@ -36,7 +36,8 @@
     <PasswordField
             fx:id="passwordField"
             promptText="Passwort"
-            prefHeight="42"/>
+            prefHeight="42"
+            onAction="#handleLogin"/>
 
     <Label
             fx:id="messageLabel"
@@ -47,5 +48,6 @@
             fx:id="loginButton"
             text="Anmelden"
             prefWidth="320"
-            prefHeight="45"/>
+            prefHeight="45"
+            onAction="#handleLogin"/>
 </VBox>

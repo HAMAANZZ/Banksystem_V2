@@ -1,0 +1,13 @@
+Backend:
+mvn clean compile
+mvn -pl backend spring-boot:run
+
+Frontend:
+mvn clean compile
+mvn -pl frontend javafx:run
+
+testuser
+passwort123
+
+
+$env:DB_PASSWORD="DEIN_POSTGRES_PASSWORT"

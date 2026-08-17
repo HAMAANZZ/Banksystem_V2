@@ -33,6 +33,12 @@
             <version>${javafx.version}</version>
         </dependency>
 
+        <!-- Wandelt JSON Antworten in Java Objekte um -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

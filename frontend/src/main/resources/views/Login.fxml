@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox
-        xmlns="http://javafx.com/javafx/22"
+        xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.banking.frontend.auth.LoginController"
         alignment="CENTER"
@@ -31,11 +31,13 @@
     <TextField
             fx:id="usernameField"
             promptText="Benutzername"
+            text="testuser"
             prefHeight="42"/>
 
     <PasswordField
             fx:id="passwordField"
             promptText="Passwort"
+            text="passwort123"
             prefHeight="42"
             onAction="#handleLogin"/>
 

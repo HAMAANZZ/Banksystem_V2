@@ -1,55 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane
-        fx:id="sceneStartseite"
-        prefHeight="600.0"
-        prefWidth="600.0"
+<BorderPane
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.banking.frontend.dashboard.StartseiteController">
+        fx:controller="com.banking.frontend.dashboard.StartseiteController"
+        prefWidth="950"
+        prefHeight="650">
 
-    <children>
+    <!-- Kopfbereich -->
+    <top>
 
-        <ListView
-                fx:id="listViewAcconts"
-                layoutX="14.0"
-                layoutY="14.0"
-                prefHeight="586.0"
-                prefWidth="253.0">
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="20"
+                style="-fx-background-color: #f4f4f4;">
 
-            <contextMenu>
-                <ContextMenu fx:id="contextMenu">
-                    <items>
+            <padding>
+                <Insets top="20"
+                        right="30"
+                        bottom="20"
+                        left="30"/>
+            </padding>
 
-                        <MenuItem
-                                fx:id="menuAuswaehlen"
-                                text="Auswählen"/>
 
-                        <MenuItem
-                                fx:id="menuLoeschen"
-                                text="Löschen"/>
+            <!-- Benutzerinformationen -->
+            <VBox
+                    spacing="5"
+                    HBox.hgrow="ALWAYS">
 
-                    </items>
-                </ContextMenu>
-            </contextMenu>
+                <Label
+                        fx:id="greetingLabel"
+                        text="Guten Tag"
+                        style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-        </ListView>
+                <Label
+                        fx:id="usernameLabel"
+                        text="Benutzer: testuser"
+                        style="-fx-font-size: 14px;"/>
 
-        <Button
-                fx:id="AccountErstellen"
-                layoutX="350.0"
-                layoutY="257.0"
-                mnemonicParsing="false"
-                prefHeight="101.0"
-                prefWidth="166.0"
-                text="Account erstellen"/>
+                <Label
+                        fx:id="roleLabel"
+                        text="Rolle: USER"
+                        style="-fx-font-size: 14px;"/>
 
-    </children>
+            </VBox>
 
-</AnchorPane>
+
+            <!-- Abmelden -->
+            <Button
+                    fx:id="logoutButton"
+                    text="Abmelden"
+                    prefWidth="120"
+                    prefHeight="40"
+                    onAction="#handleLogout"/>
+
+        </HBox>
+
+    </top>
+
+
+    <!-- Hauptbereich -->
+    <center>
+
+        <VBox spacing="25">
+
+            <padding>
+                <Insets top="30"
+                        right="40"
+                        bottom="30"
+                        left="40"/>
+            </padding>
+
+
+            <!-- Kontoübersicht -->
+            <VBox
+                    spacing="8"
+                    style="
+                        -fx-background-color: #f7f7f7;
+                        -fx-background-radius: 12;
+                        -fx-padding: 25;
+                    ">
+
+                <Label
+                        text="Mein Konto"
+                        style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                <Label
+                        text="Verfügbarer Kontostand"
+                        style="-fx-font-size: 14px;"/>
+
+                <Label
+                        fx:id="balanceLabel"
+                        text="0,00 €"
+                        style="-fx-font-size: 36px; -fx-font-weight: bold;"/>
+
+
+                <Label
+                        fx:id="accountNumberLabel"
+                        text="Kontonummer: noch nicht geladen"
+                        style="-fx-font-size: 13px;"/>
+
+            </VBox>
+
+
+            <!-- Banking Aktionen -->
+            <VBox spacing="12">
+
+                <Label
+                        text="Banking"
+                        style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+
+                <HBox spacing="15">
+
+                    <!-- Geld einzahlen -->
+                    <Button
+                            fx:id="depositButton"
+                            text="Einzahlen"
+                            prefWidth="200"
+                            prefHeight="55"/>
+
+                    <!-- Geld auszahlen -->
+                    <Button
+                            fx:id="withdrawButton"
+                            text="Auszahlen"
+                            prefWidth="200"
+                            prefHeight="55"/>
+
+                    <!-- Geld überweisen -->
+                    <Button
+                            fx:id="transferButton"
+                            text="Überweisen"
+                            prefWidth="200"
+                            prefHeight="55"/>
+
+                </HBox>
+
+            </VBox>
+
+
+            <!-- Letzte Transaktionen -->
+            <VBox spacing="10">
+
+                <Label
+                        text="Letzte Transaktionen"
+                        style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                <ListView
+                        fx:id="transactionsListView"
+                        prefHeight="230"/>
+
+            </VBox>
+
+        </VBox>
+
+    </center>
+
+</BorderPane>

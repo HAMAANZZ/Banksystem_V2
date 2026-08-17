@@ -14,6 +14,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import com.banking.frontend.auth.dto.LoginResponse;
+import com.banking.frontend.dashboard.StartseiteController;
+import tools.jackson.databind.ObjectMapper;
+
 // Steuert die Login Oberfläche.
 public class LoginController {
 
@@ -73,10 +77,21 @@ public class LoginController {
             if (response.statusCode() == 200) {
 
                 messageLabel.setText("");
-                openStartseite();
+
+                // JSON Antwort des Backends in LoginResponse umwandeln.
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                LoginResponse loginResponse = objectMapper.readValue(
+                        response.body(),
+                        LoginResponse.class
+                );
+
+                // Startseite öffnen und Benutzerdaten mitgeben.
+                openStartseite(loginResponse);
 
             } else {
 
+                // Fehlermeldung direkt vom Backend anzeigen.
                 messageLabel.setText(response.body());
             }
 
@@ -89,18 +104,28 @@ public class LoginController {
     }
 
     // Öffnet nach erfolgreichem Login die Startseite.
-    private void openStartseite() throws Exception {
+    private void openStartseite(LoginResponse loginResponse) throws Exception {
 
-        // Startseite.fxml laden.
+        // Startseite laden.
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Startseite.fxml"));
 
         Parent root = loader.load();
 
-        // Aktuelles Login Fenster holen.
-        Stage stage = (Stage) usernameField.getScene().getWindow();
+        // Den Controller der geladenen Startseite holen.
+        StartseiteController controller = loader.getController();
 
-        // Login Oberfläche durch Startseite ersetzen.
+        // Benutzername und Rolle an die Startseite übergeben.
+        controller.setUserData(loginResponse.getUsername(),
+                loginResponse.getRole(), loginResponse.getUserId());
+
+        // Aktuelles Fenster holen.
+        Stage stage = (Stage) usernameField
+                .getScene()
+                .getWindow();
+
+        // Login durch Startseite ersetzen.
         stage.setScene(new Scene(root));
+
         stage.setTitle("Banksystem");
         stage.show();
     }

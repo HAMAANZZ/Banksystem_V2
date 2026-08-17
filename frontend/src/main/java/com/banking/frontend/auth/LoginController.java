@@ -39,7 +39,6 @@ public class LoginController {
 
         // Prüfen, ob Felder leer sind
         if (username.isBlank() || password.isBlank()) {
-
             messageLabel.setText("Bitte Benutzername und Passwort eingeben.");
             return;
         }
@@ -51,13 +50,12 @@ public class LoginController {
                     {
                         "username": "%s",
                         "password": "%s"
-                    }
-                    """.formatted(username, password);
+                    }""".formatted(username, password);
 
             // HTTP Client
             HttpClient client = HttpClient.newHttpClient();
 
-            // POST Anfrage an das Backend
+            // POST Anfrage an das Backend.
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("http://localhost:8080/api/auth/login"))
                     .header("Content-Type",
@@ -65,40 +63,23 @@ public class LoginController {
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
-            // Anfrage senden
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            );
+            // Anfrage senden an Backend => SecurityConfig.java
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             // Nur zum Testen
             System.out.println("Status: " + response.statusCode());
             System.out.println("Antwort: " + response.body());
 
-
-            // Login erfolgreich
             if (response.statusCode() == 200) {
+
                 messageLabel.setText("");
                 openStartseite();
 
+            } else {
+
+                messageLabel.setText(response.body());
             }
 
-            // Benutzername oder Passwort falsch
-            else if (response.statusCode() == 401) {
-                messageLabel.setText("Benutzername oder Passwort ist falsch.");
-
-            }
-
-            // Benutzer wurde gesperrt
-            else if (response.statusCode() == 403) {
-                messageLabel.setText("Dieses Benutzerkonto ist gesperrt.");
-
-            }
-
-            // Anderer Fehler
-            else {
-                messageLabel.setText("Login fehlgeschlagen.");
-            }
 
         } catch (Exception exception) {
 

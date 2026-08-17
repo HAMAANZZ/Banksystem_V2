@@ -7,10 +7,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 // Konfiguriert die Sicherheit unserer REST API.
+/*
+ * Ablauf:
+ * - Start: Spring ruft diese @Bean-Methode 1x auf und cached die erzeugte SecurityFilterChain.
+ * - Runtime: Jede eingehende Anfrage (z.B. POST /api/auth/login) durchläuft diese
+ *   gecachte Kette. Dabei werden die definierten Matcher (z.B. permitAll())
+ *   zur Laufzeit gegen den tatsächlichen Request geprüft.
+ */
 @Configuration
 public class SecurityConfig {
 
-    //Anfrage  ==>>  SecurityFilterChain  ==>>  erlaubt? ==>>  Controller
+    //Anfrage  ==>>  SecurityFilterChain, erlaubt? ==>>  Controller
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 

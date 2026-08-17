@@ -1,0 +1,71 @@
+BankingClientApplication.main()
+=> startet JavaFX
+
+BankingClientApplication.start()
+=> lädt Login.fxml
+
+Login.fxml
+=> verbindet den LoginController
+
+LoginController.handleLogin()
+=> liest Benutzername und Passwort
+
+HttpClient.send()
+=> sendet POST /api/auth/login mit JSON
+
+SecurityFilterChain
+=> prüft, ob die Anfrage erlaubt ist
+
+AuthController.login()
+=> nimmt die Anfrage an
+
+@RequestBody
+=> wandelt JSON in LoginRequest um
+
+@Valid
+=> prüft LoginRequest
+
+AuthService.login()
+=> startet die Login Logik
+
+UserRepository.findByUsername()
+=> sucht den Benutzer
+
+PostgreSQL
+=> liefert den Benutzer zurück
+
+AuthService.login()
+=> prüft, ob der Benutzer existiert
+
+PasswordEncoder.matches()
+=> prüft das Passwort
+
+AuthService.login()
+=> prüft UserStatus.ACTIVE
+
+LoginResponse
+=> enthält userId, username und role
+
+AuthController.login()
+=> gibt LoginResponse zurück
+
+HTTP Response
+=> geht zurück zum Frontend
+
+LoginController.handleLogin()
+=> liest Statuscode und Antwort
+
+openStartseite()
+=> wird bei erfolgreichem Login aufgerufen
+
+FXMLLoader.load()
+=> lädt Startseite.fxml
+
+Startseite.fxml
+=> verbindet StartseiteController
+
+StartseiteController
+=> wird erstellt
+
+Startseite
+=> wird angezeigt

@@ -12,9 +12,7 @@ public class BankingClientApplication extends Application {
     public void start(Stage stage) throws Exception {
 
         // Lädt die erste FXML Oberfläche
-        FXMLLoader loader = new FXMLLoader(
-                BankingClientApplication.class.getResource("/views/Login.fxml")
-        );
+        FXMLLoader loader = new FXMLLoader(BankingClientApplication.class.getResource("/views/Login.fxml"));
 
         // Erstellt die Szene aus der FXML Datei
         Scene scene = new Scene(loader.load());
@@ -26,7 +24,6 @@ public class BankingClientApplication extends Application {
     }
 
     public static void main(String[] args) {
-
         // Startet JavaFX
         launch(args);
     }

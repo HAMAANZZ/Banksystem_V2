@@ -40,16 +40,12 @@ public class AuthService {
 
 
         // Eingegebenes Passwort mit dem gespeicherten Hash vergleichen.
-        boolean passwordCorrect = passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword());
-
+        boolean passwordCorrect = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!passwordCorrect) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Benutzername oder Passwort ist falsch.");
         }
-
 
         // Gesperrte oder deaktivierte Benutzer dürfen sich nicht anmelden.
         if (user.getStatus() != UserStatus.ACTIVE) {

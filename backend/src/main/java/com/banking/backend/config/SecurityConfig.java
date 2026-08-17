@@ -38,6 +38,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login")
                         .permitAll()
 
+                        // Benutzerliste laden
+                        // NUR vorübergehend für die Entwicklung
+                        //SPÄTER MIT TOCKEN Prüfen ob es sich um einen Admin handelt
+                        .requestMatchers(HttpMethod.GET, "/api/users").permitAll()
+
                         // Alles andere bleibt geschützt.
                         .anyRequest()
                         .authenticated()

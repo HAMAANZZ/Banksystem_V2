@@ -34,7 +34,7 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String geburtstag;
 
     // Speichert die Rolle als Text, zum Beispiel USER.

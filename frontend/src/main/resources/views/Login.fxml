@@ -31,13 +31,13 @@
     <TextField
             fx:id="usernameField"
             promptText="Benutzername"
-            text="testuser"
+            text="admin"
             prefHeight="42"/>
 
     <PasswordField
             fx:id="passwordField"
             promptText="Passwort"
-            text="passwort123"
+            text="Admin12345"
             prefHeight="42"
             onAction="#handleLogin"/>
 

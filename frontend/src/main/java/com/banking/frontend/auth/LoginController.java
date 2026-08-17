@@ -18,6 +18,27 @@ import com.banking.frontend.auth.dto.LoginResponse;
 import com.banking.frontend.dashboard.StartseiteController;
 import tools.jackson.databind.ObjectMapper;
 
+
+import com.banking.frontend.admin.AdminStartseiteController;
+import com.banking.frontend.auth.dto.LoginResponse;
+import com.banking.frontend.dashboard.StartseiteController;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import tools.jackson.databind.ObjectMapper;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 // Steuert die Login Oberfläche.
 public class LoginController {
 
@@ -74,24 +95,34 @@ public class LoginController {
             System.out.println("Status: " + response.statusCode());
             System.out.println("Antwort: " + response.body());
 
+            // Login erfolgreich
             if (response.statusCode() == 200) {
 
                 messageLabel.setText("");
 
                 // JSON Antwort des Backends in LoginResponse umwandeln.
-                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectMapper mapper = new ObjectMapper();
 
-                LoginResponse loginResponse = objectMapper.readValue(
+                LoginResponse loginResponse = mapper.readValue(
                         response.body(),
                         LoginResponse.class
                 );
 
-                // Startseite öffnen und Benutzerdaten mitgeben.
-                openStartseite(loginResponse);
+                // Prüfen, welche Rolle der Benutzer hat.
+                if ("ADMIN".equals(loginResponse.getRole())) {
+
+                    // Admin bekommt die Admin Startseite.
+                    openAdminStartseite(loginResponse);
+
+                } else {
+
+                    // Normaler Benutzer bekommt seine normale Startseite.
+                    openStartseite(loginResponse);
+                }
 
             } else {
 
-                // Fehlermeldung direkt vom Backend anzeigen.
+                // Fehlermeldung aus dem Backend anzeigen.
                 messageLabel.setText(response.body());
             }
 
@@ -103,30 +134,77 @@ public class LoginController {
         }
     }
 
-    // Öffnet nach erfolgreichem Login die Startseite.
+
+    // Öffnet die normale Benutzer Startseite.
     private void openStartseite(LoginResponse loginResponse) throws Exception {
 
-        // Startseite laden.
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Startseite.fxml"));
+        // FXML laden.
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/views/Startseite.fxml")
+        );
 
         Parent root = loader.load();
 
-        // Den Controller der geladenen Startseite holen.
+
+        // Controller der Startseite holen.
         StartseiteController controller = loader.getController();
 
-        // Benutzername und Rolle an die Startseite übergeben.
-        controller.setUserData(loginResponse.getUsername(),
-                loginResponse.getRole(), loginResponse.getUserId());
+
+        // Daten des eingeloggten Benutzers übergeben.
+        controller.setUserData(
+                loginResponse.getUsername(),
+                loginResponse.getRole(),
+                loginResponse.getUserId()
+        );
+
 
         // Aktuelles Fenster holen.
         Stage stage = (Stage) usernameField
                 .getScene()
                 .getWindow();
 
-        // Login durch Startseite ersetzen.
+
+        // Login durch Benutzer Startseite ersetzen.
         stage.setScene(new Scene(root));
 
         stage.setTitle("Banksystem");
+
+        stage.show();
+    }
+
+    // Öffnet die Admin Startseite.
+    private void openAdminStartseite(LoginResponse loginResponse) throws Exception {
+
+        // Admin FXML laden.
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/views/AdminStartseite.fxml")
+        );
+
+        Parent root = loader.load();
+
+
+        // Controller der Admin Seite holen.
+        AdminStartseiteController controller = loader.getController();
+
+
+        // Admin Daten übergeben.
+        controller.setAdminData(
+                loginResponse.getUsername(),
+                loginResponse.getRole()
+        );
+
+
+        // Aktuelles Fenster holen.
+        Stage stage = (Stage) usernameField
+                .getScene()
+                .getWindow();
+
+
+        // Login durch Admin Startseite ersetzen.
+        stage.setScene(new Scene(root));
+
+        stage.setTitle("Banksystem Admin");
+
         stage.show();
     }
 }

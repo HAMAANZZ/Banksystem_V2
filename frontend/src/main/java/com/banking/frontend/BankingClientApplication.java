@@ -1,18 +1,18 @@
 package com.banking.frontend;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class BankingClientApplication extends Application {
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
 
-        Label label = new Label("Banksystem");
+        FXMLLoader loader = new FXMLLoader(BankingClientApplication.class.getResource("/views/Login.fxml"));
 
-        Scene scene = new Scene(label, 1000, 700);
+        Scene scene = new Scene(loader.load());
 
         stage.setTitle("Banksystem");
         stage.setScene(scene);

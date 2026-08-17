@@ -10,7 +10,7 @@
 <VBox
         xmlns="http://javafx.com/javafx/22"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="de.banksystem.frontend.controller.LoginController"
+        fx:controller="com.banking.frontend.auth.LoginController"
         alignment="CENTER"
         spacing="15"
         prefWidth="420"

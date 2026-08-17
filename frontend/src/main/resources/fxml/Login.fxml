@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox
+        xmlns="http://javafx.com/javafx/22"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="de.banksystem.frontend.controller.LoginController"
+        alignment="CENTER"
+        spacing="15"
+        prefWidth="420"
+        prefHeight="500">
+
+    <padding>
+        <Insets top="40" right="50" bottom="40" left="50"/>
+    </padding>
+
+    <Label
+            text="Banksystem"
+            style="-fx-font-size: 30px; -fx-font-weight: bold;"/>
+
+    <Label
+            text="Bitte anmelden"
+            style="-fx-font-size: 16px;"/>
+
+    <TextField
+            fx:id="usernameField"
+            promptText="Benutzername"
+            prefHeight="42"/>
+
+    <PasswordField
+            fx:id="passwordField"
+            promptText="Passwort"
+            prefHeight="42"/>
+
+    <Label
+            fx:id="messageLabel"
+            text=""
+            style="-fx-text-fill: red;"/>
+
+    <Button
+            fx:id="loginButton"
+            text="Anmelden"
+            prefWidth="320"
+            prefHeight="45"/>
+</VBox>

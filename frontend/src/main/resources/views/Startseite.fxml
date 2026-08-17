@@ -29,11 +29,11 @@
 
                         <MenuItem
                                 fx:id="menuAuswaehlen"
-                                text="Auswählen" />
+                                text="Auswählen"/>
 
                         <MenuItem
                                 fx:id="menuLoeschen"
-                                text="Löschen" />
+                                text="Löschen"/>
 
                     </items>
                 </ContextMenu>
@@ -48,7 +48,7 @@
                 mnemonicParsing="false"
                 prefHeight="101.0"
                 prefWidth="166.0"
-                text="Account erstellen" />
+                text="Account erstellen"/>
 
     </children>
 

@@ -21,6 +21,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+
+import java.util.Optional;
+
 // Controller für die Admin Startseite.
 public class AdminStartseiteController {
 
@@ -59,7 +64,8 @@ public class AdminStartseiteController {
 
     @FXML
     private TableColumn<UserResponse, String> statusColumn;
-
+    @FXML
+    private Button activateUserButton;
 
     @FXML
     private Button createUserButton;
@@ -68,8 +74,186 @@ public class AdminStartseiteController {
     private Button refreshButton;
 
     @FXML
+    private Button disableUserButton;
+
+    @FXML
+    private Button deleteUserButton;
+
+    @FXML
     private Button logoutButton;
 
+    @FXML
+    private void handleActivateUser() {
+
+        UserResponse selectedUser = userTable.getSelectionModel().getSelectedItem();
+
+        if (selectedUser == null) {
+            showError("Bitte zuerst einen Benutzer auswählen.");
+            return;
+        }
+
+        if ("ADMIN".equals(selectedUser.getRole())) {
+            showError("Der Administrator ist bereits aktiv.");
+            return;
+        }
+
+        if ("ACTIVE".equals(selectedUser.getStatus())) {
+            showError("Dieser Benutzer ist bereits aktiv.");
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+
+        confirmation.setTitle("Benutzer aktivieren");
+        confirmation.setHeaderText("Benutzer aktivieren?");
+        confirmation.setContentText(
+                "Möchtest du den Benutzer \"" + selectedUser.getUsername() + "\" wieder aktivieren?"
+        );
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+
+        if (result.isEmpty() || result.get() != ButtonType.OK) {
+            return;
+        }
+
+        try {
+
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(
+                            "http://localhost:8080/api/users/"
+                                    + selectedUser.getId()
+                                    + "/activate"
+                    ))
+                    .method(
+                            "PATCH",
+                            HttpRequest.BodyPublishers.noBody()
+                    )
+                    .build();
+
+            HttpResponse<String> response = client.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+            );
+
+            if (response.statusCode() == 200) {
+                showInfo("Benutzer wurde aktiviert.");
+                loadUsers();
+                return;
+            }
+
+            showError(response.body());
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            showError("Benutzer konnte nicht aktiviert werden.");
+        }
+    }
+
+    @FXML
+    private void handleDisableUser() {
+
+        UserResponse selectedUser = userTable.getSelectionModel().getSelectedItem();
+
+        if (selectedUser == null) {
+            showError("Bitte zuerst einen Benutzer auswählen.");
+            return;
+        }
+
+        if ("ADMIN".equals(selectedUser.getRole())) {
+            showError("Ein Administrator kann nicht deaktiviert werden.");
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+
+        confirmation.setTitle("Benutzer deaktivieren");
+        confirmation.setHeaderText("Benutzer deaktivieren?");
+        confirmation.setContentText("Möchtest du den Benutzer \"" + selectedUser.getUsername() + "\" wirklich deaktivieren?");
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+
+        if (result.isEmpty() || result.get() != ButtonType.OK) {
+            return;
+        }
+
+        try {
+
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:8080/api/users/" + selectedUser.getId() + "/disable"))
+                    .method("PATCH", HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                showInfo("Benutzer wurde deaktiviert.");
+                loadUsers();
+                return;
+            }
+
+            showError(response.body());
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            showError("Benutzer konnte nicht deaktiviert werden.");
+        }
+    }
+
+    @FXML
+    private void handleDeleteUser() {
+
+        UserResponse selectedUser = userTable.getSelectionModel().getSelectedItem();
+
+        if (selectedUser == null) {
+            showError("Bitte zuerst einen Benutzer auswählen.");
+            return;
+        }
+
+        if ("ADMIN".equals(selectedUser.getRole())) {
+            showError("Ein Administrator kann nicht gelöscht werden.");
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+
+        confirmation.setTitle("Benutzer löschen");
+        confirmation.setHeaderText("Benutzer endgültig löschen?");
+        confirmation.setContentText("Der Benutzer \"" + selectedUser.getUsername() + "\" und seine Kontodaten werden endgültig gelöscht.");
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+
+        if (result.isEmpty() || result.get() != ButtonType.OK) {
+            return;
+        }
+
+        try {
+
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:8080/api/users/" + selectedUser.getId()))
+                    .DELETE()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 204) {
+                showInfo("Benutzer wurde gelöscht.");
+                loadUsers();
+                return;
+            }
+
+            showError(response.body());
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            showError("Benutzer konnte nicht gelöscht werden.");
+        }
+    }
 
     // Wird automatisch ausgeführt, nachdem die FXML geladen wurde.
     @FXML
@@ -87,52 +271,28 @@ public class AdminStartseiteController {
     private void configureColumns() {
 
         idColumn.setCellValueFactory(data ->
-                new ReadOnlyObjectWrapper<>(
-                        data.getValue().getId()
-                )
-        );
+                new ReadOnlyObjectWrapper<>(data.getValue().getId()));
 
         usernameColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getUsername()
-                )
-        );
+                new SimpleStringProperty(data.getValue().getUsername()));
 
         firstNameColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getFirstName()
-                )
-        );
+                new SimpleStringProperty(data.getValue().getFirstName()));
 
         lastNameColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getLastName()
-                )
-        );
+                new SimpleStringProperty(data.getValue().getLastName()));
 
         emailColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getEmail()
-                )
-        );
+                new SimpleStringProperty(data.getValue().getEmail()));
 
         geburtstagColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getGeburtstag()
-                )
-        );
+                new SimpleStringProperty(data.getValue().getGeburtstag()));
 
         roleColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getRole()
-                )
-        );
+                new SimpleStringProperty(data.getValue().getRole()));
 
         statusColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getStatus()
-                )
-        );
+                new SimpleStringProperty(data.getValue().getStatus()));
     }
 
 
@@ -147,20 +307,11 @@ public class AdminStartseiteController {
 
             // GET Anfrage an das Backend.
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(
-                            URI.create(
-                                    "http://localhost:8080/api/users"
-                            )
-                    )
-                    .GET()
-                    .build();
+                    .uri(URI.create("http://localhost:8080/api/users")).GET().build();
 
 
             // Anfrage senden.
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            );
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 
             // Benutzer erfolgreich geladen.
@@ -168,28 +319,18 @@ public class AdminStartseiteController {
 
                 // JSON in Java Benutzer umwandeln.
                 ObjectMapper mapper = new ObjectMapper();
-
-                UserResponse[] users = mapper.readValue(
-                        response.body(),
-                        UserResponse[].class
-                );
+                UserResponse[] users = mapper.readValue(response.body(), UserResponse[].class);
 
 
                 // Alte Tabelle leeren.
                 userTable.getItems().clear();
-
-
                 // Benutzer in Tabelle einfügen.
                 userTable.getItems().addAll(users);
             } else {
 
-                System.out.println(
-                        "Benutzer konnten nicht geladen werden."
-                );
+                System.out.println("Benutzer konnten nicht geladen werden.");
 
-                System.out.println(
-                        response.body()
-                );
+                System.out.println(response.body());
             }
 
         } catch (Exception exception) {
@@ -197,7 +338,6 @@ public class AdminStartseiteController {
             exception.printStackTrace();
         }
     }
-
 
     // Wird beim Klick auf Aktualisieren ausgeführt.
     @FXML
@@ -220,10 +360,7 @@ public class AdminStartseiteController {
 
 
             // Aktuelles Fenster holen.
-            Stage stage = (Stage) createUserButton
-                    .getScene()
-                    .getWindow();
-
+            Stage stage = (Stage) createUserButton.getScene().getWindow();
 
             // Admin Seite durch Benutzerformular ersetzen.
             stage.setScene(new Scene(root));
@@ -263,17 +400,32 @@ public class AdminStartseiteController {
 
 
     // Wird nach erfolgreichem Admin Login aufgerufen.
-    public void setAdminData(
-            String username,
-            String role
-    ) {
+    public void setAdminData(String username, String role) {
 
-        adminNameLabel.setText(
-                "Admin: " + username
-        );
+        adminNameLabel.setText("Admin: " + username);
 
-        roleLabel.setText(
-                "Rolle: " + role
-        );
+        roleLabel.setText("Rolle: " + role);
+    }
+
+    private void showError(String message) {
+
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.setTitle("Fehler");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        alert.showAndWait();
+    }
+
+    private void showInfo(String message) {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+        alert.setTitle("Banksystem");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        alert.showAndWait();
     }
 }

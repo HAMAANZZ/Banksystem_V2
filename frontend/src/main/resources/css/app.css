@@ -160,3 +160,21 @@
 .table-row-cell:selected .text {
     -fx-fill: #1d4ed8;
 }
+.danger-button {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-padding: 11 20;
+    -fx-cursor: hand;
+}
+
+.danger-button:hover {
+    -fx-background-color: #b91c1c;
+}
+
+.danger-button:pressed {
+    -fx-background-color: #991b1b;
+}

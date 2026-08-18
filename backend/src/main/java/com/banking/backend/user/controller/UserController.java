@@ -1,15 +1,17 @@
 package com.banking.backend.user.controller;
 
-import com.banking.backend.user.dto.CreateUserRequest;
-import com.banking.backend.user.dto.UserResponse;
-import com.banking.backend.user.service.UserService;
-
+import com.banking.backend.user.dto.*;
+import com.banking.backend.user.service.*;
 import jakarta.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import com.banking.backend.transaction.repository.*;
+import com.banking.backend.user.model.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.*;
 
 // REST Controller für alle Benutzer Anfragen.
 @RestController
@@ -24,6 +26,18 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PatchMapping("/{userId}/disable")
+    public UserResponse disableUser(@PathVariable("userId") Long userId) {
+
+        return userService.disableUser(userId);
+    }
+
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable("userId") Long userId) {
+
+        userService.deleteUser(userId);
+    }
 
     // Erstellt einen neuen Benutzer.
     // POST /api/users
@@ -43,4 +57,12 @@ public class UserController {
         // Lädt alle Benutzer über den Service.
         return userService.getAllUsers();
     }
+
+    @PatchMapping("/{userId}/activate")
+    public UserResponse activateUser(@PathVariable("userId") Long userId) {
+
+        return userService.activateUser(userId);
+    }
+
+
 }

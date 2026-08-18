@@ -17,6 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import com.banking.backend.account.model.Account;
+import com.banking.backend.transaction.repository.TransactionRepository;
+import com.banking.backend.user.model.Role;
+import com.banking.backend.user.model.UserStatus;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * CreateUserRequest → UserService → Username vorhanden? → E-Mail vorhanden?
@@ -30,15 +36,54 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
 
     public UserService(
             UserRepository userRepository,
             AccountRepository accountRepository,
+            TransactionRepository transactionRepository,
             PasswordEncoder passwordEncoder) {
-
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional
+    public UserResponse disableUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Benutzer wurde nicht gefunden."));
+
+        if (user.getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ein Administrator kann nicht deaktiviert werden.");
+        }
+
+        user.setStatus(UserStatus.DISABLED);
+
+        User savedUser = userRepository.save(user);
+
+        return convertToResponse(savedUser);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Benutzer wurde nicht gefunden."));
+
+        if (user.getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ein Administrator kann nicht gelöscht werden.");
+        }
+
+        accountRepository.findByUserId(userId).ifPresent(account -> {
+
+            transactionRepository.deleteAllByAccountId(account.getId());
+
+            accountRepository.delete(account);
+        });
+
+        userRepository.delete(user);
     }
 
     // Erstellt einen neuen Benutzer.
@@ -88,6 +133,28 @@ public class UserService {
         return convertToResponse(savedUser);
     }
 
+    @Transactional
+    public UserResponse activateUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Benutzer wurde nicht gefunden."
+                ));
+
+        if (user.getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Der Administrator muss nicht aktiviert werden."
+            );
+        }
+
+        user.setStatus(UserStatus.ACTIVE);
+
+        User savedUser = userRepository.save(user);
+
+        return convertToResponse(savedUser);
+    }
 
     // Lädt alle Benutzer.
     public List<UserResponse> getAllUsers() {

@@ -14,4 +14,6 @@ public interface TransactionRepository extends JpaRepository<BankTransaction, Lo
     // Alle Transaktionen eines Kontos laden.
     // Neueste Transaktion steht zuerst.
     List<BankTransaction> findAllByAccountIdOrderByCreatedAtDesc(Long accountId);
+
+    void deleteAllByAccountId(Long accountId);
 }

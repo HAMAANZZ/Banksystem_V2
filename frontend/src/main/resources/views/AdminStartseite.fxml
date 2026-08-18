@@ -86,10 +86,34 @@
                 <Region HBox.hgrow="ALWAYS"/>
 
                 <Button
-                        fx:id="refreshButton"
-                        text="Aktualisieren"
+                    fx:id="refreshButton"
+                    text="Aktualisieren"
+                    styleClass="secondary-button"
+                    onAction="#handleRefresh"/>
+
+                <Region prefWidth="10"/>
+
+                <Button
+                        fx:id="activateUserButton"
+                        text="Aktivieren"
+                        styleClass="primary-button"
+                        onAction="#handleActivateUser"/>
+
+                <Region prefWidth="10"/>
+
+                <Button
+                        fx:id="disableUserButton"
+                        text="Deaktivieren"
                         styleClass="secondary-button"
-                        onAction="#handleRefresh"/>
+                        onAction="#handleDisableUser"/>
+
+                <Region prefWidth="10"/>
+
+                <Button
+                        fx:id="deleteUserButton"
+                        text="Löschen"
+                        styleClass="danger-button"
+                        onAction="#handleDeleteUser"/>
 
                 <Region prefWidth="10"/>
 
@@ -98,7 +122,6 @@
                         text="Benutzer anlegen"
                         styleClass="primary-button"
                         onAction="#handleCreateUser"/>
-
             </HBox>
 
             <TableView

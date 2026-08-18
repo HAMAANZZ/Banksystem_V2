@@ -90,7 +90,7 @@ public class CreateUserController {
                     email,
                     firstName,
                     lastName,
-                    geburtstag,
+                    geburtstag + "",
                     password
             );
 

@@ -43,53 +43,39 @@ public class AccountService {
     @Transactional
     public AccountResponse transfer(Long senderUserId, String receiverAccountNumber, BigDecimal amount) {
 
-
-        // Betrag prüfen.
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Der Überweisungsbetrag muss größer als 0 sein.");
         }
 
+        if (receiverAccountNumber == null || receiverAccountNumber.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Die Empfänger Kontonummer darf nicht leer sein.");
+        }
 
-        // Senderkonto suchen.
+        receiverAccountNumber = receiverAccountNumber.trim();
+
         Account senderAccount = accountRepository.findByUserId(senderUserId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Senderkonto wurde nicht gefunden."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Senderkonto wurde nicht gefunden."));
 
+        Account receiverAccount = accountRepository.findByAccountNumber(receiverAccountNumber)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empfängerkonto wurde nicht gefunden."));
 
-        // Empfängerkonto suchen.
-        Account receiverAccount =accountRepository.findByAccountNumber(receiverAccountNumber).orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,"Empfängerkonto wurde nicht gefunden."));
-
-
-        // Keine Überweisung auf das eigene Konto.
         if (senderAccount.getId().equals(receiverAccount.getId())) {
-
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Eine Überweisung auf das eigene Konto ist nicht möglich.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Eine Überweisung auf das eigene Konto ist nicht möglich.");
         }
 
-
-        // Prüfen, ob genug Geld vorhanden ist.
         if (senderAccount.getBalance().compareTo(amount) < 0) {
-
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Nicht genügend Guthaben.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nicht genügend Guthaben.");
         }
 
+        BigDecimal senderNewBalance = senderAccount.getBalance().subtract(amount);
+        BigDecimal receiverNewBalance = receiverAccount.getBalance().add(amount);
 
-        // Neuer Kontostand des Senders.
-        BigDecimal senderNewBalance =senderAccount.getBalance().subtract(amount);
-
-        // Neuer Kontostand des Empfängers.
-        BigDecimal receiverNewBalance =receiverAccount.getBalance().add(amount);
         senderAccount.setBalance(senderNewBalance);
         receiverAccount.setBalance(receiverNewBalance);
 
-        // Beide Konten speichern.
         Account savedSender = accountRepository.save(senderAccount);
-        Account savedReceiver =accountRepository.save(receiverAccount);
+        Account savedReceiver = accountRepository.save(receiverAccount);
 
-
-        // Transaktion für Sender.
         BankTransaction senderTransaction = new BankTransaction();
         senderTransaction.setAccount(savedSender);
         senderTransaction.setType(TransactionType.TRANSFER_OUT);
@@ -97,11 +83,8 @@ public class AccountService {
         senderTransaction.setBalanceAfter(senderNewBalance);
         transactionRepository.save(senderTransaction);
 
-        // Transaktion für Empfänger.
-        BankTransaction receiverTransaction =new BankTransaction();
+        BankTransaction receiverTransaction = new BankTransaction();
         receiverTransaction.setAccount(savedReceiver);
-
-
         receiverTransaction.setType(TransactionType.TRANSFER_IN);
         receiverTransaction.setAmount(amount);
         receiverTransaction.setBalanceAfter(receiverNewBalance);
@@ -109,7 +92,6 @@ public class AccountService {
 
         return convertToResponse(savedSender);
     }
-
 
     // Zahlt Geld auf das Konto eines Benutzers ein.
     @Transactional

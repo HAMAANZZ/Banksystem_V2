@@ -441,7 +441,9 @@ public class StartseiteController {
     }
 
     private void transfer(String receiverAccountNumber, BigDecimal amount) {
+
         try {
+
             String json = """
                     {
                         "receiverAccountNumber": "%s",
@@ -527,12 +529,17 @@ public class StartseiteController {
                 }
 
 
-                String line = symbol + currencyFormat.format(transaction.getAmount())
+                String line =
+                        typeText
                         + "    "
-                        + typeText
+                        + symbol
+                        + currencyFormat.format(transaction.getAmount())
                         + "    "
-                        + transaction.getCreatedAt()
-                        .format(dateFormatter);
+                        + transaction.getCreatedAt().format(dateFormatter)
+                        + "    Kontostand: "
+                        + currencyFormat.format(transaction.getBalanceAfter())
+                        + "    ID: "
+                        + transaction.getId();
 
                 transactionsListView.getItems().add(line);
             }

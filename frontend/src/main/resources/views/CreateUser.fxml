@@ -1,103 +1,169 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox
+<StackPane
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.banking.frontend.admin.CreateUserController"
-        alignment="CENTER"
-        spacing="15"
-        prefWidth="500"
-        prefHeight="650">
+        prefWidth="650"
+        prefHeight="760"
+        styleClass="page-background">
 
-    <padding>
-        <Insets top="40" right="60" bottom="40" left="60"/>
-    </padding>
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
 
-    <!-- Überschrift -->
-    <Label
-            text="Benutzer anlegen"
-            style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+    <VBox
+            spacing="16"
+            maxWidth="500"
+            styleClass="card">
 
-    <Label
-            text="Neuen Bankbenutzer erstellen"/>
+        <padding>
+            <Insets top="30" right="35" bottom="30" left="35"/>
+        </padding>
 
+        <Label
+                text="Benutzer anlegen"
+                styleClass="page-title"/>
 
-    <!-- Benutzername -->
-    <TextField
-            fx:id="usernameField"
-            promptText="Benutzername"
-            prefHeight="42"/>
+        <Label
+                text="Erstelle einen neuen Bankbenutzer"
+                styleClass="subtitle"/>
 
-    <!-- Passwort -->
-    <PasswordField
-            fx:id="passwordField"
-            promptText="Passwort"
-            prefHeight="42"/>
+        <VBox spacing="6">
 
+            <Label
+                    text="Benutzername"
+                    styleClass="info-label"/>
 
-    <!-- Passwort wiederholen -->
-    <PasswordField
-            fx:id="confirmPasswordField"
-            promptText="Passwort wiederholen"
-            prefHeight="42"/>
+            <TextField
+                    fx:id="usernameField"
+                    promptText="Benutzername"
+                    prefHeight="43"/>
 
-    <!-- E Mail -->
-    <TextField
-            fx:id="emailField"
-            promptText="E Mail"
-            prefHeight="42"/>
+        </VBox>
 
+        <HBox spacing="12">
 
-    <!-- Vorname -->
-    <TextField
-            fx:id="firstNameField"
-            promptText="Vorname"
-            prefHeight="42"/>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
 
+                <Label
+                        text="Vorname"
+                        styleClass="info-label"/>
 
-    <!-- Nachname -->
-    <TextField
-            fx:id="lastNameField"
-            promptText="Nachname"
-            prefHeight="42"/>
+                <TextField
+                        fx:id="firstNameField"
+                        promptText="Vorname"
+                        prefHeight="43"
+                        maxWidth="Infinity"/>
 
-    <!-- Geburtstag -->
-    <TextField
-            fx:id="geburtstagField"
-            promptText="Geburtstag (JJJJ-MM-TT)"
-            prefHeight="42"/>
+            </VBox>
 
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
 
+                <Label
+                        text="Nachname"
+                        styleClass="info-label"/>
 
+                <TextField
+                        fx:id="lastNameField"
+                        promptText="Nachname"
+                        prefHeight="43"
+                        maxWidth="Infinity"/>
 
-    <!-- Meldung für Erfolg oder Fehler -->
-    <Label
-            fx:id="messageLabel"
-            text=""/>
+            </VBox>
 
+        </HBox>
 
-    <!-- Benutzer erstellen -->
-    <Button
-            fx:id="createUserButton"
-            text="Benutzer erstellen"
-            prefWidth="300"
-            prefHeight="45"
-            onAction="#handleCreateUser"/>
+        <VBox spacing="6">
 
+            <Label
+                    text="E-Mail"
+                    styleClass="info-label"/>
 
-    <!-- Zurück zur Admin Startseite -->
-    <Button
-            fx:id="backButton"
-            text="Zurück"
-            prefWidth="300"
-            prefHeight="40"
-            onAction="#handleBack"/>
+            <TextField
+                    fx:id="emailField"
+                    promptText="E-Mail"
+                    prefHeight="43"/>
 
-</VBox>
+        </VBox>
+
+        <VBox spacing="6">
+
+            <Label
+                    text="Geburtstag"
+                    styleClass="info-label"/>
+
+            <TextField
+                    fx:id="geburtstagField"
+                    promptText="JJJJ-MM-TT"
+                    prefHeight="43"/>
+
+        </VBox>
+
+        <HBox spacing="12">
+
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+
+                <Label
+                        text="Passwort"
+                        styleClass="info-label"/>
+
+                <PasswordField
+                        fx:id="passwordField"
+                        promptText="Passwort"
+                        prefHeight="43"
+                        maxWidth="Infinity"/>
+
+            </VBox>
+
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+
+                <Label
+                        text="Passwort bestätigen"
+                        styleClass="info-label"/>
+
+                <PasswordField
+                        fx:id="confirmPasswordField"
+                        promptText="Wiederholen"
+                        prefHeight="43"
+                        maxWidth="Infinity"/>
+
+            </VBox>
+
+        </HBox>
+
+        <Label
+                fx:id="messageLabel"
+                text=""
+                wrapText="true"
+                styleClass="message-label"/>
+
+        <Button
+                fx:id="createUserButton"
+                text="Benutzer erstellen"
+                maxWidth="Infinity"
+                prefHeight="45"
+                styleClass="primary-button"
+                onAction="#handleCreateUser"/>
+
+        <Button
+                fx:id="backButton"
+                text="Zurück"
+                maxWidth="Infinity"
+                prefHeight="42"
+                styleClass="secondary-button"
+                onAction="#handleBack"/>
+
+    </VBox>
+
+</StackPane>

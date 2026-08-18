@@ -1,66 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.banking.frontend.dashboard.StartseiteController"
-        prefWidth="950"
-        prefHeight="650">
+        prefWidth="1100"
+        prefHeight="720"
+        styleClass="root-container">
+
+    <stylesheets>
+        <URL value="@../css/startseite.css"/>
+    </stylesheets>
+
 
     <!-- Kopfbereich -->
     <top>
 
-        <HBox
-                alignment="CENTER_LEFT"
-                spacing="20"
-                style="-fx-background-color: #f4f4f4;">
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-bar">
 
             <padding>
-                <Insets top="20"
-                        right="30"
-                        bottom="20"
-                        left="30"/>
+                <Insets top="22" right="35" bottom="22" left="35"/>
             </padding>
 
 
-            <!-- Benutzerinformationen -->
-            <VBox
-                    spacing="5"
-                    HBox.hgrow="ALWAYS">
+            <VBox spacing="4">
 
                 <Label
                         fx:id="greetingLabel"
                         text="Guten Tag"
-                        style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        styleClass="greeting-label"/>
 
                 <Label
                         fx:id="usernameLabel"
-                        text="Benutzer: testuser"
-                        style="-fx-font-size: 14px;"/>
+                        text="Benutzer wird geladen..."
+                        styleClass="user-info-label"/>
 
                 <Label
                         fx:id="roleLabel"
-                        text="Rolle: USER"
-                        style="-fx-font-size: 14px;"/>
+                        text="Rolle wird geladen..."
+                        styleClass="user-info-label"/>
 
             </VBox>
 
 
-            <!-- Abmelden -->
+            <!-- Drückt Abmelden nach rechts -->
+            <Region HBox.hgrow="ALWAYS"/>
+
+
             <Button
                     fx:id="logoutButton"
                     text="Abmelden"
-                    prefWidth="120"
-                    prefHeight="40"
-                    onAction="#handleLogout"/>
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
 
         </HBox>
 
@@ -70,97 +71,108 @@
     <!-- Hauptbereich -->
     <center>
 
-        <VBox spacing="25">
+        <VBox spacing="26" styleClass="content-container">
 
             <padding>
-                <Insets top="30"
-                        right="40"
-                        bottom="30"
-                        left="40"/>
+                <Insets top="32" right="45" bottom="35" left="45"/>
             </padding>
 
 
-            <!-- Kontoübersicht -->
-            <VBox
-                    spacing="8"
-                    style="
-                        -fx-background-color: #f7f7f7;
-                        -fx-background-radius: 12;
-                        -fx-padding: 25;
-                    ">
+            <!-- Konto Karte -->
+            <VBox spacing="10" styleClass="account-card">
 
                 <Label
                         text="Mein Konto"
-                        style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        styleClass="section-title"/>
 
                 <Label
                         text="Verfügbarer Kontostand"
-                        style="-fx-font-size: 14px;"/>
+                        styleClass="muted-label"/>
 
                 <Label
                         fx:id="balanceLabel"
                         text="0,00 €"
-                        style="-fx-font-size: 36px; -fx-font-weight: bold;"/>
+                        styleClass="balance-label"/>
 
+                <HBox alignment="CENTER_LEFT" spacing="10">
 
-                <Label
-                        fx:id="accountNumberLabel"
-                        text="Kontonummer: noch nicht geladen"
-                        style="-fx-font-size: 13px;"/>
+                    <Label
+                            text="Kontonummer"
+                            styleClass="account-number-title"/>
 
-            </VBox>
-
-
-            <!-- Banking Aktionen -->
-            <VBox spacing="12">
-
-                <Label
-                        text="Banking"
-                        style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-
-
-                <HBox spacing="15">
-
-                    <!-- Geld einzahlen -->
-                    <Button
-                            fx:id="depositButton"
-                            text="Einzahlen"
-                            prefWidth="200"
-                            prefHeight="55"
-                            onAction="#handleDeposit"/>
-
-                    <!-- Geld auszahlen -->
-                    <Button
-                            fx:id="withdrawButton"
-                            text="Auszahlen"
-                            prefWidth="200"
-                            prefHeight="55"
-                            onAction="#handleWithdraw"/>
-
-                    <!-- Geld überweisen -->
-                    <Button
-                            fx:id="transferButton"
-                            text="Überweisen"
-                            prefWidth="200"
-                            prefHeight="55"
-                            onAction="#handleTransfer"/>
-
+                    <Label
+                            fx:id="accountNumberLabel"
+                            text="wird geladen..."
+                            styleClass="account-number-label"/>
 
                 </HBox>
 
             </VBox>
 
 
-            <!-- Letzte Transaktionen -->
-            <VBox spacing="10">
+            <!-- Banking Aktionen -->
+            <VBox spacing="14">
 
                 <Label
-                        text="Letzte Transaktionen"
-                        style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        text="Banking"
+                        styleClass="section-title"/>
+
+
+                <HBox spacing="16">
+
+                    <Button
+                            fx:id="depositButton"
+                            text="Einzahlen"
+                            onAction="#handleDeposit"
+                            maxWidth="Infinity"
+                            HBox.hgrow="ALWAYS"
+                            styleClass="banking-button"/>
+
+                    <Button
+                            fx:id="withdrawButton"
+                            text="Auszahlen"
+                            onAction="#handleWithdraw"
+                            maxWidth="Infinity"
+                            HBox.hgrow="ALWAYS"
+                            styleClass="banking-button"/>
+
+                    <Button
+                            fx:id="transferButton"
+                            text="Überweisen"
+                            onAction="#handleTransfer"
+                            maxWidth="Infinity"
+                            HBox.hgrow="ALWAYS"
+                            styleClass="primary-banking-button"/>
+
+                </HBox>
+
+            </VBox>
+
+
+            <!-- Transaktionen -->
+            <VBox spacing="14" VBox.vgrow="ALWAYS">
+
+                <HBox alignment="CENTER_LEFT">
+
+                    <VBox spacing="2">
+
+                        <Label
+                                text="Letzte Transaktionen"
+                                styleClass="section-title"/>
+
+                        <Label
+                                text="Deine letzten Kontobewegungen"
+                                styleClass="muted-label"/>
+
+                    </VBox>
+
+                </HBox>
+
 
                 <ListView
                         fx:id="transactionsListView"
-                        prefHeight="230"/>
+                        VBox.vgrow="ALWAYS"
+                        styleClass="transaction-list"/>
 
             </VBox>
 

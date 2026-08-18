@@ -1,0 +1,50 @@
+# Banksystem_V2
+
+Ein einfaches Fullstack Banksystem mit Java, Spring Boot, JavaFX und PostgreSQL.
+
+## Funktionen
+
+Das Projekt unterstützt aktuell:
+
+- Benutzer Login
+- Admin Dashboard
+- Benutzer erstellen
+- Automatische Kontoerstellung
+- Kontostand anzeigen
+- Geld einzahlen
+- Geld auszahlen
+- Geld überweisen
+- Transaktionen anzeigen
+- Rollen wie USER und ADMIN
+
+## Technologien
+
+### Backend
+
+- Java 21
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Maven
+
+### Frontend
+
+- JavaFX
+- FXML
+- CSS
+- Java HTTP Client
+
+## Projektstruktur
+
+```text
+Banksystem_V2
+│
+├── backend
+│   └── Spring Boot REST API
+│
+├── frontend
+│   └── JavaFX Benutzeroberfläche
+│
+└── pom.xml

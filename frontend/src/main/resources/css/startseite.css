@@ -1,0 +1,211 @@
+.root-container {
+    -fx-background-color: #f4f7fb;
+    -fx-font-family: "Segoe UI";
+}
+
+
+/* Kopfbereich */
+
+.top-bar {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #e8edf3 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+
+.greeting-label {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #172033;
+}
+
+
+.user-info-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #667085;
+}
+
+
+/* Hauptinhalt */
+
+.content-container {
+    -fx-background-color: #f4f7fb;
+}
+
+
+.section-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #172033;
+}
+
+
+.muted-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7b8494;
+}
+
+
+/* Konto Karte */
+
+.account-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-padding: 26;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 18, 0, 0, 4);
+}
+
+
+.balance-label {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #172033;
+    -fx-padding: 4 0 8 0;
+}
+
+
+.account-number-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #667085;
+}
+
+
+.account-number-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #344054;
+}
+
+
+/* Banking Buttons */
+
+.banking-button {
+    -fx-background-color: white;
+    -fx-text-fill: #344054;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d5dbe5;
+    -fx-border-width: 1;
+    -fx-padding: 14 20;
+    -fx-cursor: hand;
+}
+
+
+.banking-button:hover {
+    -fx-background-color: #f5f7fa;
+    -fx-border-color: #98a2b3;
+}
+
+
+.banking-button:pressed {
+    -fx-background-color: #eaecf0;
+}
+
+
+/* Überweisen als Hauptaktion */
+
+.primary-banking-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 14 20;
+    -fx-cursor: hand;
+}
+
+
+.primary-banking-button:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+
+.primary-banking-button:pressed {
+    -fx-background-color: #1e40af;
+}
+
+
+/* Abmelden */
+
+.logout-button {
+    -fx-background-color: #f8fafc;
+    -fx-text-fill: #344054;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-border-color: #d7dde6;
+    -fx-padding: 10 22;
+    -fx-cursor: hand;
+}
+
+
+.logout-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+
+/* Transaktionsliste */
+
+.transaction-list {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #e4e9f0;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+}
+
+
+.transaction-list .viewport {
+    -fx-background-color: transparent;
+}
+
+
+.transaction-list .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #344054;
+    -fx-font-size: 13px;
+    -fx-padding: 13 15;
+    -fx-border-color: transparent transparent #edf0f4 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+
+.transaction-list .list-cell:hover {
+    -fx-background-color: #f8fafc;
+}
+
+
+.transaction-list .list-cell:selected {
+    -fx-background-color: #eef4ff;
+    -fx-text-fill: #1d4ed8;
+}
+
+
+.transaction-list .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+
+/* Scrollbar */
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #c5ccd8;
+    -fx-background-radius: 10;
+}
+
+
+.scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}

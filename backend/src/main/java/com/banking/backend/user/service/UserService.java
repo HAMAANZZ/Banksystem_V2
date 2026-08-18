@@ -10,6 +10,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import com.banking.backend.account.model.Account;
+import com.banking.backend.account.repository.AccountRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+
+import com.banking.backend.account.model.Account;
+
 /**
  * CreateUserRequest → UserService → Username vorhanden? → E-Mail vorhanden?
  * → User Objekt erstellen → Passwort hashen → userRepository.save → PostgreSQL
@@ -21,20 +29,20 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AccountRepository accountRepository;
 
-
-    // Spring gibt uns Repository und PasswordEncoder automatisch.
     public UserService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder
-    ) {
+            AccountRepository accountRepository,
+            PasswordEncoder passwordEncoder) {
 
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-
     // Erstellt einen neuen Benutzer.
+    @Transactional
     public UserResponse createUser(CreateUserRequest request) {
 
         // Benutzername darf nicht doppelt vorkommen.
@@ -71,7 +79,10 @@ public class UserService {
 
         // Benutzer in PostgreSQL speichern.
         User savedUser = userRepository.save(user);
-
+        Account account = new Account();
+        account.setAccountNumber(generateAccountNumber());
+        account.setUser(savedUser);
+        accountRepository.save(account);
 
         // Sichere Antwort ohne Passwort zurückgeben.
         return convertToResponse(savedUser);
@@ -91,7 +102,6 @@ public class UserService {
 
     // Wandelt User in UserResponse um.
     private UserResponse convertToResponse(User user) {
-
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
@@ -101,7 +111,22 @@ public class UserService {
                 user.getGeburtstag(),
                 user.getRole(),
                 user.getStatus(),
-                user.getCreatedAt()
-        );
+                user.getCreatedAt());
+    }
+
+    private String generateAccountNumber() {
+
+        String accountNumber;
+
+        do {
+            accountNumber = "BK"
+                    + UUID.randomUUID()
+                    .toString()
+                    .replace("-", "")
+                    .substring(0, 12)
+                    .toUpperCase();
+        } while (accountRepository.existsByAccountNumber(accountNumber));
+
+        return accountNumber;
     }
 }

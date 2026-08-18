@@ -126,21 +126,25 @@
                             fx:id="depositButton"
                             text="Einzahlen"
                             prefWidth="200"
-                            prefHeight="55"/>
+                            prefHeight="55"
+                            onAction="#handleDeposit"/>
 
                     <!-- Geld auszahlen -->
                     <Button
                             fx:id="withdrawButton"
                             text="Auszahlen"
                             prefWidth="200"
-                            prefHeight="55"/>
+                            prefHeight="55"
+                            onAction="#handleWithdraw"/>
 
                     <!-- Geld überweisen -->
                     <Button
                             fx:id="transferButton"
                             text="Überweisen"
                             prefWidth="200"
-                            prefHeight="55"/>
+                            prefHeight="55"
+                            onAction="#handleTransfer"/>
+
 
                 </HBox>
 

@@ -31,17 +31,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // Registrierung ist ohne Login erlaubt.
-                        .requestMatchers(HttpMethod.POST, "/api/users")
-                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
                         // Login ist ohne Login erlaubt.
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login")
-                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
                         // Benutzerliste laden
                         // NUR vorübergehend für die Entwicklung
                         //SPÄTER MIT TOCKEN Prüfen ob es sich um einen Admin handelt
                         .requestMatchers(HttpMethod.GET, "/api/users").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/accounts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accounts/**").permitAll()
 
                         // Alles andere bleibt geschützt.
                         .anyRequest()

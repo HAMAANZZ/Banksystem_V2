@@ -1,361 +1,515 @@
-# 🏗 Architektur
+<div align="center">
 
-Das Projekt besteht aus drei Hauptteilen:
+# 🏦 Banksystem V2
 
-```text
-JavaFX Frontend
-↓
-Spring Boot Backend
-↓
-PostgreSQL
+### Fullstack Banking Application
+
+Java • Spring Boot • JavaFX • PostgreSQL
+
+</div>
+
+---
+
+## 📌 Über das Projekt
+
+Banksystem V2 ist eine Java Fullstack Anwendung mit getrenntem Frontend und Backend.
+
+Das System unterstützt:
+
+- Login
+- Benutzerverwaltung
+- Benutzerrollen
+- Bankkonten
+- Einzahlungen
+- Auszahlungen
+- Überweisungen
+- Transaktionshistorie
+
+---
+
+# 🛠 Technologien
+
+### Backend
+
+- Java 21
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+
+### Frontend
+
+- JavaFX
+- FXML
+- CSS
+- Java HTTP Client
+- Jackson
+
+### Build
+
+- Maven
+
+---
+
+# 🏗 Systemarchitektur
+
+```mermaid
+flowchart TD
+
+    A[JavaFX Frontend]
+
+    B[REST API]
+
+    C[Spring Security]
+
+    D[Controller]
+
+    E[Service]
+
+    F[Repository]
+
+    G[(PostgreSQL)]
+
+    A -->|HTTP / JSON| B
+
+    B --> C
+
+    C --> D
+
+    D --> E
+
+    E --> F
+
+    F -->|JPA / Hibernate| G
 ```
 
-Das Frontend sendet HTTP Anfragen als JSON an das Backend.
+Das Frontend kommuniziert ausschließlich über HTTP Requests mit dem Spring Boot Backend.
 
-Das Backend verarbeitet die Anfrage über:
+---
 
-```text
-Controller
-↓
-Service
-↓
-Repository
-↓
-PostgreSQL
+# 📦 Backend Architektur
+
+```mermaid
+flowchart LR
+
+    Controller --> Service
+
+    Service --> Repository
+
+    Repository --> Database[(PostgreSQL)]
+```
+
+### Controller
+
+Empfängt HTTP Requests und gibt Antworten an das Frontend zurück.
+
+### Service
+
+Enthält die Geschäftslogik des Banksystems.
+
+### Repository
+
+Kommuniziert über Spring Data JPA mit PostgreSQL.
+
+---
+
+# 🧩 Datenmodell
+
+```mermaid
+classDiagram
+
+    class User {
+        Long id
+        String username
+        String email
+        String password
+        String firstName
+        String lastName
+        String geburtstag
+        Role role
+        UserStatus status
+        LocalDateTime createdAt
+    }
+
+    class Account {
+        Long id
+        String accountNumber
+        BigDecimal balance
+    }
+
+    class BankTransaction {
+        Long id
+        TransactionType type
+        BigDecimal amount
+        BigDecimal balanceAfter
+        LocalDateTime createdAt
+    }
+
+    User "1" --> "1" Account : besitzt
+
+    Account "1" --> "*" BankTransaction : enthält
+```
+
+Ein Benutzer besitzt genau ein Konto.
+
+Ein Konto kann mehrere Transaktionen besitzen.
+
+---
+
+# 🔐 Login Ablauf
+
+```mermaid
+sequenceDiagram
+
+    actor User
+
+    participant F as JavaFX LoginController
+
+    participant C as AuthController
+
+    participant S as AuthService
+
+    participant R as UserRepository
+
+    participant DB as PostgreSQL
+
+
+    User->>F: Benutzername + Passwort
+
+    F->>C: POST /api/auth/login
+
+    C->>S: login()
+
+    S->>R: findByUsername()
+
+    R->>DB: SELECT User
+
+    DB-->>R: User
+
+    R-->>S: User
+
+
+    S->>S: Passwort prüfen
+
+    S->>S: Status prüfen
+
+    S->>S: Rolle prüfen
+
+
+    S-->>C: LoginResponse
+
+    C-->>F: JSON Response
+
+
+    alt Rolle USER
+
+        F->>F: Startseite öffnen
+
+    else Rolle ADMIN
+
+        F->>F: Admin Dashboard öffnen
+
+    end
 ```
 
 ---
 
-# 🔄 Wie funktioniert eine Anfrage?
+# 👤 Benutzer erstellen
 
-Beispiel: Der Benutzer zahlt 100 € ein.
+```mermaid
+sequenceDiagram
 
-```text
-Benutzer klickt auf „Einzahlen“
-↓
-JavaFX liest den Betrag
-↓
-POST /api/accounts/user/{userId}/deposit
-↓
-AccountController
-↓
-AccountService
-↓
-AccountRepository
-↓
-PostgreSQL
-↓
-Kontostand wird aktualisiert
-↓
-Transaktion wird gespeichert
-↓
-Backend sendet neuen Kontostand zurück
-↓
-JavaFX aktualisiert die Anzeige
+    actor Admin
+
+    participant F as JavaFX
+
+    participant C as UserController
+
+    participant S as UserService
+
+    participant UR as UserRepository
+
+    participant AR as AccountRepository
+
+    participant DB as PostgreSQL
+
+
+    Admin->>F: Benutzer erstellen
+
+    F->>C: POST /api/users
+
+    C->>S: createUser()
+
+
+    S->>UR: Benutzer prüfen
+
+    UR->>DB: SELECT
+
+    DB-->>UR: Ergebnis
+
+
+    S->>S: Passwort hashen
+
+    S->>UR: save(User)
+
+    UR->>DB: INSERT User
+
+
+    S->>S: Kontonummer erstellen
+
+    S->>AR: save(Account)
+
+    AR->>DB: INSERT Account
+
+
+    S-->>C: UserResponse
+
+    C-->>F: Benutzer erstellt
 ```
 
-Beispiel Request:
-
-```json
-{
-  "amount": 100.00
-}
-```
+Beim Erstellen eines Benutzers wird automatisch ein Bankkonto erzeugt.
 
 ---
 
 # 💰 Einzahlung
 
-Die Einzahlung läuft im Backend über den `AccountService`.
+```mermaid
+sequenceDiagram
 
-Beispiel:
+    actor User
 
-```text
-Alter Kontostand:
-500,00 €
+    participant F as JavaFX
 
-Einzahlung:
-100,00 €
+    participant C as AccountController
 
-Neuer Kontostand:
-600,00 €
+    participant S as AccountService
+
+    participant AR as AccountRepository
+
+    participant TR as TransactionRepository
+
+    participant DB as PostgreSQL
+
+
+    User->>F: Einzahlen
+
+    F->>C: POST /deposit
+
+    C->>S: deposit()
+
+
+    S->>AR: findByUserId()
+
+    AR->>DB: SELECT Account
+
+    DB-->>AR: Account
+
+
+    S->>S: Betrag prüfen
+
+    S->>S: Kontostand aktualisieren
+
+
+    S->>AR: save(Account)
+
+    AR->>DB: UPDATE Account
+
+
+    S->>TR: save(DEPOSIT)
+
+    TR->>DB: INSERT Transaction
+
+
+    S-->>C: AccountResponse
+
+    C-->>F: Neuer Kontostand
+
+
+    F->>F: Anzeige aktualisieren
+
+    F->>F: Transaktionen neu laden
 ```
-
-Intern:
-
-```text
-Account suchen
-↓
-aktuellen Kontostand laden
-↓
-Betrag addieren
-↓
-Account speichern
-↓
-DEPOSIT Transaktion speichern
-```
-
-Dadurch wird nicht nur der Kontostand geändert, sondern die Einzahlung erscheint auch in der Transaktionshistorie.
 
 ---
 
-# 💸 Auszahlung
-
-Bei einer Auszahlung wird zuerst geprüft, ob genügend Guthaben vorhanden ist.
-
-```text
-Kontostand:
-500,00 €
-
-Auszahlung:
-200,00 €
-↓
-genug Guthaben?
-↓
-JA
-↓
-500 € - 200 €
-↓
-300 €
-```
-
-Wenn der Benutzer mehr auszahlen möchte als vorhanden ist:
-
-```text
-Kontostand:
-500 €
-
-Auszahlung:
-700 €
-↓
-Nicht genügend Guthaben
-↓
-Auszahlung wird abgebrochen
-```
-
-Eine erfolgreiche Auszahlung wird als:
-
-```text
-WITHDRAWAL
-```
-
-gespeichert.
-
----
 
 # 🔁 Überweisung
 
-Bei einer Überweisung sind zwei Konten beteiligt:
+```mermaid
+sequenceDiagram
 
-```text
-Sender
-↓
-Empfänger
+    actor User
+
+    participant F as JavaFX
+
+    participant C as AccountController
+
+    participant S as AccountService
+
+    participant AR as AccountRepository
+
+    participant TR as TransactionRepository
+
+    participant DB as PostgreSQL
+
+
+    User->>F: Empfängerkonto + Betrag
+
+    F->>C: POST /transfer
+
+    C->>S: transfer()
+
+
+    S->>AR: Senderkonto suchen
+
+    AR->>DB: SELECT Sender
+
+
+    S->>AR: Empfängerkonto suchen
+
+    AR->>DB: SELECT Empfänger
+
+
+    S->>S: Konten prüfen
+
+    S->>S: Guthaben prüfen
+
+
+    S->>S: Sender Kontostand ändern
+
+    S->>S: Empfänger Kontostand ändern
+
+
+    S->>AR: Sender speichern
+
+    AR->>DB: UPDATE Sender
+
+
+    S->>AR: Empfänger speichern
+
+    AR->>DB: UPDATE Empfänger
+
+
+    S->>TR: TRANSFER_OUT speichern
+
+    TR->>DB: INSERT Transaction
+
+
+    S->>TR: TRANSFER_IN speichern
+
+    TR->>DB: INSERT Transaction
+
+
+    S-->>C: AccountResponse
+
+    C-->>F: Überweisung erfolgreich
 ```
 
-Der Benutzer gibt ein:
+Die gesamte Überweisung läuft innerhalb einer Datenbanktransaktion.
 
-```text
-Empfänger Kontonummer
-+
-Betrag
-```
-
-Danach passiert:
-
-```text
-Senderkonto suchen
-↓
-Empfängerkonto über Kontonummer suchen
-↓
-prüfen, ob beide Konten verschieden sind
-↓
-Guthaben des Senders prüfen
-↓
-Betrag beim Sender abziehen
-↓
-Betrag beim Empfänger hinzufügen
-↓
-beide Konten speichern
-```
-
-Beispiel:
-
-```text
-Sender:
-1.000 €
-
-Empfänger:
-500 €
-
-Überweisung:
-200 €
-```
-
-Danach:
-
-```text
-Sender:
-800 €
-
-Empfänger:
-700 €
-```
-
-Zusätzlich werden zwei Transaktionen gespeichert:
-
-```text
-Sender
-↓
-TRANSFER_OUT
-↓
--200 €
-
-Empfänger
-↓
-TRANSFER_IN
-↓
-+200 €
-```
-
-Die komplette Überweisung läuft innerhalb einer Datenbank Transaktion.
-
-Das bedeutet:
-
-```text
-entweder alles funktioniert
-↓
-Sender und Empfänger werden aktualisiert
-
-oder
-
-es tritt ein Fehler auf
-↓
-alles wird zurückgesetzt
-```
-
-Dadurch kann nicht passieren, dass beim Sender Geld abgezogen wird, aber der Empfänger kein Geld erhält.
+Dadurch werden alle Änderungen gemeinsam gespeichert oder bei einem Fehler gemeinsam zurückgesetzt.
 
 ---
 
-# 📜 Transaktionen
+# 📜 Transaktionssystem
 
-Jede Kontobewegung wird in PostgreSQL gespeichert.
 
-Aktuell gibt es:
+Unterstützte Typen:
 
-```text
-DEPOSIT       → Einzahlung
-WITHDRAWAL    → Auszahlung
-TRANSFER_IN   → Überweisung erhalten
-TRANSFER_OUT  → Überweisung gesendet
-```
+| Typ | Bedeutung |
+|---|---|
+| `DEPOSIT` | Einzahlung |
+| `WITHDRAWAL` | Auszahlung |
+| `TRANSFER_OUT` | Überweisung gesendet |
+| `TRANSFER_IN` | Überweisung erhalten |
 
-Eine Transaktion enthält zum Beispiel:
+---
 
-```text
-ID
-Typ
-Betrag
-Kontostand danach
-Datum
-Uhrzeit
-Konto
-```
+# 🔗 Beziehungen
 
-Beispiel:
+```mermaid
+flowchart LR
 
-```text
-Überweisung erhalten
-+100,00 €
-18.08.2026 13:21
-Kontostand danach: 1.500,00 €
+    U[User]
+
+    A[Account]
+
+    T1[Transaction]
+
+    T2[Transaction]
+
+    T3[Transaction]
+
+
+    U -->|1 : 1| A
+
+    A -->|1 : n| T1
+
+    A -->|1 : n| T2
+
+    A -->|1 : n| T3
 ```
 
 ---
 
-# 👤 Benutzer und Konto
+# 🌐 REST API
 
-Jeder Benutzer besitzt genau ein Konto.
-
-```text
-User
-↓
-1 : 1
-↓
-Account
-```
-
-Der `User` enthält zum Beispiel:
-
-```text
-Benutzername
-E-Mail
-Passwort
-Vorname
-Nachname
-Rolle
-Status
-```
-
-Der `Account` enthält:
-
-```text
-Kontonummer
-Kontostand
-Benutzer
-```
-
-Beim Erstellen eines neuen Benutzers wird automatisch ein Konto mit:
-
-```text
-0,00 €
-```
-
-angelegt.
+| Methode | Endpoint | Funktion |
+|---|---|---|
+| POST | `/api/auth/login` | Login |
+| POST | `/api/users` | Benutzer erstellen |
+| GET | `/api/users` | Benutzer laden |
+| GET | `/api/accounts/user/{userId}` | Konto laden |
+| POST | `/api/accounts/user/{userId}/deposit` | Einzahlung |
+| POST | `/api/accounts/user/{userId}/withdraw` | Auszahlung |
+| POST | `/api/accounts/user/{userId}/transfer` | Überweisung |
+| GET | `/api/accounts/user/{userId}/transactions` | Transaktionen laden |
 
 ---
 
-# 🔐 Login
 
-Beim Login sendet JavaFX Benutzername und Passwort an das Backend.
 
-```text
-Login.fxml
-↓
-LoginController
-↓
-POST /api/auth/login
-↓
-AuthController
-↓
-AuthService
-↓
-UserRepository
-↓
-PostgreSQL
+# ▶️ Starten
+
+Backend:
+
+```powershell
+$env:DB_PASSWORD="DEIN_POSTGRES_PASSWORT"
+
+mvn -pl backend spring-boot:run
 ```
 
-Das Backend prüft:
+Frontend in einem zweiten Terminal:
 
-```text
-Benutzer vorhanden?
-↓
-Passwort korrekt?
-↓
-Benutzer ACTIVE?
-↓
-Rolle prüfen
+```powershell
+mvn -pl frontend javafx:run
 ```
 
-Danach wird entschieden:
+---
 
-```text
-USER
-↓
-Benutzer Dashboard
+# 🚧 Status
 
-ADMIN
-↓
-Admin Dashboard
-```
+Aktuell umgesetzt:
+
+- ✅ Login
+- ✅ Admin Dashboard
+- ✅ Benutzer erstellen
+- ✅ Bankkonto
+- ✅ Einzahlung
+- ✅ Auszahlung
+- ✅ Überweisung
+- ✅ Transaktionshistorie
+- ✅ PostgreSQL
+- ✅ JavaFX UI
+- ✅ CSS Design
+
+---
+
+<div align="center">
+
+**Banksystem V2**
+
+Java Fullstack Lernprojekt
+
+</div>
